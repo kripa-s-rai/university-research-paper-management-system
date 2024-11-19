@@ -1,0 +1,108 @@
+/* src/components/RegisterPage.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px; /* Added some padding around the body */
+  }
+  
+  .register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .register-form {
+    background-color: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Limiting the max width of the form */
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .register-form:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .register-form h2 {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .register-form input,
+  .register-form select {
+    width: 100%;
+    padding: 0.9rem;
+    margin: 0.8rem 0;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .register-form input:focus,
+  .register-form select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .register-form input::placeholder,
+  .register-form select {
+    color: #aaa;
+  }
+  
+  .register-form button {
+    width: 100%;
+    padding: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .register-form button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+  
+  .register-form button:active {
+    background-color: #003f7d;
+    transform: translateY(1px);
+  }
+  
+  .error-message {
+    color: #ff4d4d;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
+  
+  .register-form select {
+    background-color: #fafafa;
+  }
+  
+  .register-form select:focus {
+    background-color: #fff;
+    border-color: #007bff;
+  }
+  

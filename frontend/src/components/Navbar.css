@@ -1,0 +1,91 @@
+/* Base Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  background-color: #f8f9fa; /* Light gray background */
+  color: #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Logo and Branding */
+.navbar-brand {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.navbar-logo {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.navbar-logo:hover {
+  color: #007bff; /* Blue on hover */
+}
+
+/* Navbar Links */
+.navbar-links {
+  display: flex;
+  list-style: none;
+}
+
+.navbar-links li {
+  margin-left: 1.5rem;
+}
+
+.navbar-link {
+  color: #333;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: #007bff; /* Blue color on hover */
+}
+
+/* Logout Button */
+.navbar-button {
+  background-color: #28a745; /* Green for logout */
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-button:hover {
+  background-color: #218838; /* Darker green */
+}
+
+.navbar-button:active {
+  background-color: #1e7e34; /* Even darker on click */
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    margin-top: 1rem;
+  }
+
+  .navbar-links li {
+    margin: 0.8rem 0;
+  }
+}

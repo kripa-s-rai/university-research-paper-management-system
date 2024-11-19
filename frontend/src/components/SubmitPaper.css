@@ -1,0 +1,232 @@
+/* General Body Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+/* Submit Paper Page Layout */
+.submit-paper-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Styling */
+.submit-paper-header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    border-bottom: 3px solid #45a049;
+}
+
+.submit-paper-header h1 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.submit-paper-header p {
+    font-size: 1.1em;
+    margin-top: 10px;
+    font-weight: 300;
+}
+
+/* Main Content Area */
+.submit-paper-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 15px;
+}
+
+.submit-paper-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+}
+
+/* Form Fields Styling */
+.form-field {
+    margin-bottom: 18px;
+}
+
+.form-field label {
+    font-size: 1em;
+    color: #4a4a4a;
+    margin-bottom: 5px;
+    font-weight: 500;
+    display: block;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.95em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fafafa;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+}
+
+/* Select Dropdown Specific Styling */
+.form-field select {
+    background-color: #fafafa;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 35px;
+    position: relative;
+}
+
+.form-field select option {
+    padding: 8px;
+}
+
+.form-field select:focus {
+    border-color: #4CAF50;
+}
+
+.form-field select::-ms-expand {
+    display: none;
+}
+
+/* Progress Bar */
+.progress-bar {
+    background-color: #e9ecef;
+    height: 6px;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.progress {
+    height: 100%;
+    background-color: #28a745;
+    width: 0;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Button Styling */
+.form-actions button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-actions button:hover {
+    background-color: #45a049;
+}
+
+.form-actions button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+/* Error and Success Messages */
+.error-message,
+.success-message {
+    margin-top: 15px;
+    font-size: 1em;
+    text-align: center;
+    font-weight: 500;
+}
+
+.error-message {
+    color: #e74c3c;
+}
+
+.success-message {
+    color: #2ecc71;
+}
+
+/* Footer Styling */
+.submit-paper-footer {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 15px 20px;
+    margin-top: auto;
+    border-top: 3px solid #45a049;
+}
+
+.submit-paper-footer p {
+    margin: 0;
+}
+
+/* Suggestions Styling */
+.suggestions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+}
+
+.suggestions-list li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .submit-paper-form {
+        padding: 20px;
+    }
+
+    .form-field label {
+        font-size: 0.95em;
+    }
+
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+
+    .form-actions button {
+        font-size: 1em;
+        padding: 12px;
+    }
+
+    .submit-paper-header h1 {
+        font-size: 1.8em;
+    }
+
+    .submit-paper-header p {
+        font-size: 1em;
+    }
+}
