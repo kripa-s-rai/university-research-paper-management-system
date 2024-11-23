@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Reports.css';
 
 const Reports = () => {
   const [papers, setPapers] = useState([]);
@@ -12,7 +13,7 @@ const Reports = () => {
         const response = await axios.get('http://localhost:5000/api/reporting/aggregated');
         setAggregatedData(response.data);
       } catch (error) {
-        console.error('Error fetching aggregated data', error);
+        console.error('Error fetching aggregated data:', error);
       }
     };
 
@@ -22,7 +23,7 @@ const Reports = () => {
         setPapers(response.data);
         setLoading(false); // Set loading to false when papers are fetched
       } catch (error) {
-        console.error('Error fetching papers data', error);
+        console.error('Error fetching papers data:', error);
       }
     };
 
@@ -31,28 +32,32 @@ const Reports = () => {
   }, []);
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Papers Statistics</h2>
+    <div className="reports-container">
+      <header className="reports-header">
+        <h1>Papers Statistics Dashboard</h1>
+        <p>View aggregated data and detailed reports on submitted research papers.</p>
+      </header>
 
-      {/* Aggregated Data */}
-      <div>
+      {/* Aggregated Data Section */}
+      <section className="aggregated-data">
         <h3>Aggregated Data (Papers by Status)</h3>
-        <ul>
+        <div className="aggregated-grid">
           {aggregatedData.map((item) => (
-            <li key={item.Status}>
-              {item.Status}: {item.NumberOfPapers} paper(s)
-            </li>
+            <div key={item.Status} className={`status-card ${item.Status.toLowerCase()}`}>
+              <h4>{item.Status}</h4>
+              <p>{item.NumberOfPapers} paper(s)</p>
+            </div>
           ))}
-        </ul>
-      </div>
+        </div>
+      </section>
 
-      {/* Papers List */}
-      <div className="mt-4">
-        <h3>Papers</h3>
+      {/* Papers List Section */}
+      <section className="papers-list">
+        <h3>Papers List</h3>
         {loading ? (
-          <p>Loading papers...</p>
+          <p className="loading-text">Loading papers...</p>
         ) : (
-          <table className="table table-striped">
+          <table className="table table-hover">
             <thead>
               <tr>
                 <th>Title</th>
@@ -65,15 +70,21 @@ const Reports = () => {
                 <tr key={paper.PaperID}>
                   <td>{paper.Title}</td>
                   <td>
-                    {paper.authors ? paper.authors.join(', ') : 'No authors'} {/* Assuming authors is an array */}
+                    {paper.authors && paper.authors.length > 0
+                      ? paper.authors.join(', ')
+                      : 'No authors'}
                   </td>
-                  <td>{paper.Status}</td>
+                  <td>
+                    <span className={`status-label ${paper.Status.toLowerCase()}`}>
+                      {paper.Status}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </div>
+      </section>
     </div>
   );
 };

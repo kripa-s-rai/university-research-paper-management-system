@@ -65,6 +65,7 @@ const Register = () => {
     }
 
     const userData = { username, email, password, role, department }; // Include department in userData
+    console.log(userData);
     try {
       await axios.post('http://localhost:5000/api/users/register', userData);
       alert('User registered successfully!');

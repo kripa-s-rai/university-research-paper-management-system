@@ -99,7 +99,7 @@ const Paper = {
 
   // Link paper with a journal using the paperjournals junction table
   linkPaperWithJournal: (paperId, journalId) => {
-    const sql = 'INSERT INTO paperjournals (PaperID, JournalID) SELECT ?, ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM paperjournals WHERE PaperID = ? AND JournalID = ?)';
+    const sql = 'INSERT INTO paperjournal (PaperID, JournalID) SELECT ?, ? FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM paperjournal WHERE PaperID = ? AND JournalID = ?)';
     return new Promise((resolve, reject) => {
       db.query(sql, [paperId, journalId, paperId, journalId], (err, result) => {
         if (err) {
@@ -223,19 +223,26 @@ const Paper = {
   },
   getPaperById: (paperId) => {
     return new Promise((resolve, reject) => {
-      console.log("Received paperId:", paperId); // Debugging
+      if (!paperId || (typeof paperId !== 'string' && typeof paperId !== 'number')) {
+        return reject(new Error("Invalid paperId"));
+      }
+  
       const query = "SELECT * FROM papers WHERE PaperID = ?";
       db.query(query, [paperId], (err, result) => {
         if (err) {
           console.error("Database error:", err);
           return reject(err);
         }
-        console.log("Query result:", result); // Debugging
+        
+        if (result.length === 0) {
+          return reject(new Error("Paper not found"));
+        }
+  
         resolve(result);
       });
     });
-    
   },
+  
 
   deletePaper: (paperId) => {
     const query = 'DELETE FROM papers WHERE PaperID = ?';
@@ -249,6 +256,61 @@ const Paper = {
         resolve(result); // Resolve if successful
       });
     });
+  },
+  getAssociatedDomains:async (paperId) => {
+    // Query the database for associated domains for a given paper ID
+    try {
+      // Use con.promise().query() to make the query return a promise
+      const [rows] = await db.promise().query(
+        'SELECT * FROM domains JOIN paperdomains ON domains.DomainID = paperdomains.DomainID WHERE paperdomains.PaperID = ?',
+        [paperId]
+      );
+      return rows;
+    } catch (error) {
+      console.error('Error fetching associated domains:', error.message);
+      throw error;  // Optional: Rethrow error to be handled by the caller
+    }
+  },
+  
+  getAssociatedConferences: async (paperId) => {
+    // Similar query for conferences
+    try {
+      const [rows] = await db.promise().query(
+        'SELECT * FROM conferences JOIN paperconferences ON conferences.ConferenceID = paperconferences.ConferenceID WHERE paperconferences.PaperID = ?',
+        [paperId]
+      );
+      return rows;
+    } catch (error) {
+      console.error('Error fetching associated conferences:', error.message);
+      throw error;
+    }
+  },
+  
+  getAssociatedJournals :async (paperId) => {
+    // Similar query for journals
+    try {
+      const [rows] = await db.promise().query(
+        'SELECT * FROM journals JOIN paperjournal ON journals.JournalID = paperjournal.JournalID WHERE paperjournal.PaperID = ?',
+        [paperId]
+      );
+      return rows;
+    } catch (error) {
+      console.error('Error fetching associated journals:', error.message);
+      throw error;
+    }
+  },
+  
+  getAssociatedAuthors: async (paperId) => {
+    try {
+      const [rows] = await db.promise().query(
+        'SELECT * FROM users JOIN paperauthors ON users.UserID = paperauthors.AuthorID WHERE paperauthors.PaperID = ?',
+        [paperId]
+      );
+      return rows;
+    } catch (error) {
+      console.error('Error fetching associated authors:', error.message);
+      throw error;
+    }
   },
   addAssociation: async (paperId, type, value) => {
     switch (type) {

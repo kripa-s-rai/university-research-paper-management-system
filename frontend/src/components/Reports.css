@@ -1,0 +1,136 @@
+/* General Styling */
+.reports-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    max-width: 1200px;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header Section */
+  .reports-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .reports-header h1 {
+    font-size: 28px;
+    color: #333;
+  }
+  
+  .reports-header p {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  /* Aggregated Data Section */
+  .aggregated-data {
+    margin-bottom: 30px;
+  }
+  
+  .aggregated-data h3 {
+    font-size: 22px;
+    color: #444;
+    margin-bottom: 15px;
+  }
+  
+  .aggregated-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .status-card {
+    flex: 1 1 calc(33.333% - 20px);
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .status-card h4 {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  
+  .status-card p {
+    font-size: 16px;
+    color: #777;
+  }
+  
+  .status-card.submitted {
+    border-left: 5px solid #f0ad4e;
+  }
+  
+  .status-card.accepted {
+    border-left: 5px solid #5cb85c;
+  }
+  
+  .status-card.rejected {
+    border-left: 5px solid #d9534f;
+  }
+  
+  /* Papers List Section */
+  .papers-list h3 {
+    font-size: 22px;
+    color: #444;
+    margin-bottom: 15px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .table th {
+    background-color: #f4f4f4;
+    color: #555;
+  }
+  
+  .table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .table-hover tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Status Labels */
+  .status-label {
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+  
+  .status-label.submitted {
+    background-color: #f0ad4e;
+  }
+  
+  .status-label.accepted {
+    background-color: #5cb85c;
+  }
+  
+  .status-label.rejected {
+    background-color: #d9534f;
+  }
+  
+  /* Loading Text */
+  .loading-text {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+  }
+  

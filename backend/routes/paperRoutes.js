@@ -11,5 +11,6 @@ router.get('/:id', paperController.getPaperById);
 router.delete('/:id', paperController.deletePaper);
 router.post("/:paperId/:type", paperController.addAssociation);
 router.delete("/:paperId/:type/:valueId", paperController.removeAssociation);
+router.get('/:paperId/associations', paperController.getAssociations);
 
 module.exports = router;

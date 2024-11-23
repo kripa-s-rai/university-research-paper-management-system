@@ -17,172 +17,60 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Submit paper (with file upload handling)
+// Submit paper (with file upload handling)
 exports.submitPaper = [
   upload.single('document'),
-  (req, res) => {
-    // Destructure paper data from req.body
+  async (req, res) => {
     const { title, abstract, domainId, conference, journal, authorId } = req.body;
 
-    // Validate: Ensure required fields and document are provided
     if (!title || !abstract || !domainId || !authorId || !req.file) {
       return res.status(400).json({ error: 'Title, abstract, domain, author ID, and document are required.' });
     }
 
-    // Handle Domain - Check if the domain already exists
-    let domainID = domainId;
-    if (isNaN(domainId)) {
-      db.query(
-        'SELECT DomainID FROM domains WHERE DomainName = ?',
-        [domainId],
-        (err, domainResult) => {
-          if (err) {
-            return res.status(500).json({ error: 'Error checking domain.' });
-          }
+    try {
+      // Handle Domain
+      const domainID = await checkOrCreate('domains', 'DomainID', 'DomainName', domainId);
 
-          if (domainResult.length === 0) {
-            // Insert new domain if it doesn't exist
-            db.query(
-              'INSERT INTO domains (DomainName) VALUES (?)',
-              [domainId],
-              (err, insertDomainResult) => {
-                if (err) {
-                  return res.status(500).json({ error: 'Failed to insert domain.' });
-                }
-                domainID = insertDomainResult.insertId;
-                handleConferenceAndJournal();
-              }
-            );
-          } else {
-            domainID = domainResult[0].DomainID;
-            handleConferenceAndJournal();
-          }
-        }
-      );
-    } else {
-      handleConferenceAndJournal();
+      // Handle Conference
+      const conferenceID = conference ? await checkOrCreate('conferences', 'ConferenceID', 'ConferenceName', conference) : null;
+
+      // Handle Journal
+      const journalID = journal ? await checkOrCreate('journals', 'JournalID', 'JournalName', journal) : null;
+
+      // Insert the paper into the database
+      const paperData = {
+        title,
+        abstract,
+        document: req.file.path,
+        authorId,
+        submissionDate: new Date(),
+      };
+      const paperResult = await Paper.submit(paperData);
+
+      // Link associations
+      await Paper.linkPaperWithDomain(paperResult.insertId, domainID);
+      if (conferenceID) await Paper.linkPaperWithConference(paperResult.insertId, conferenceID);
+      if (journalID) await Paper.linkPaperWithJournal(paperResult.insertId, journalID);
+
+      res.status(200).json({ message: 'Paper submitted successfully!', paperId: paperResult.insertId });
+    } catch (error) {
+      console.error('Error submitting paper:', error);
+      res.status(500).json({ error: 'Failed to submit paper.' });
     }
-
-    function handleConferenceAndJournal() {
-      // Handle Conference - Check if the conference already exists
-      let conferenceID = conference;
-      if (conference && isNaN(conference)) {
-        db.query(
-          'SELECT ConferenceID FROM conferences WHERE ConferenceName = ?',
-          [conference],
-          (err, conferenceResult) => {
-            if (err) {
-              return res.status(500).json({ error: 'Error checking conference.' });
-            }
-
-            if (conferenceResult.length === 0) {
-              // Insert new conference if it doesn't exist
-              db.query(
-                'INSERT INTO conferences (ConferenceName) VALUES (?)',
-                [conference],
-                (err, insertConferenceResult) => {
-                  if (err) {
-                    return res.status(500).json({ error: 'Failed to insert conference.' });
-                  }
-                  conferenceID = insertConferenceResult.insertId;
-                  handleJournal();
-                }
-              );
-            } else {
-              conferenceID = conferenceResult[0].ConferenceID;
-              handleJournal();
-            }
-          }
-        );
-      } else {
-        handleJournal();
-      }
-
-      function handleJournal() {
-        // Handle Journal - Check if the journal already exists
-        let journalID = journal;
-        if (journal && isNaN(journal)) {
-          db.query(
-            'SELECT JournalID FROM journals WHERE JournalName = ?',
-            [journal],
-            (err, journalResult) => {
-              if (err) {
-                return res.status(500).json({ error: 'Error checking journal.' });
-              }
-
-              if (journalResult.length === 0) {
-                // Insert new journal if it doesn't exist
-                db.query(
-                  'INSERT INTO journals (JournalName, JournalDate) VALUES (?, NOW())',
-                  [journal],
-                  (err, insertJournalResult) => {
-                    if (err) {
-                      return res.status(500).json({ error: 'Failed to insert journal.' });
-                    }
-                    journalID = insertJournalResult.insertId;
-                    insertPaper();
-                  }
-                );
-              } else {
-                journalID = journalResult[0].JournalID;
-                insertPaper();
-              }
-            }
-          );
-        } else {
-          insertPaper();
-        }
-      }
-
-      function insertPaper() {
-        // Insert the paper into the papers table
-        const paperData = {
-          title,
-          abstract,
-          document: req.file.path, // Path to the uploaded document
-          authorId,
-          submissionDate: new Date(),
-        };
-
-        Paper.submit(paperData)
-          .then((paperResult) => {
-            
-            // Link the paper with domain, conference, and journal in their respective junction tables
-            Paper.linkPaperWithDomain(paperResult.insertId, domainID)
-              .then(() => {
-                if (conferenceID) {
-                  Paper.linkPaperWithConference(paperResult.insertId, conferenceID)
-                    .then(() => {
-                      if (journalID) {
-                        Paper.linkPaperWithJournal(paperResult.insertId, journalID)
-                          .then(() => {
-                            // Respond with success message
-                            res.status(200).json({ message: 'Paper submitted successfully!', paperId: paperResult.insertId });
-                          })
-                          .catch((err) => {
-                            res.status(500).json({ error: 'Failed to link paper with journal.' });
-                          });
-                      } else {
-                        res.status(200).json({ message: 'Paper submitted successfully!', paperId: paperResult.insertId });
-                      }
-                    })
-                    .catch((err) => {
-                      res.status(500).json({ error: 'Failed to link paper with conference.' });
-                    });
-                } else {
-                  res.status(200).json({ message: 'Paper submitted successfully!', paperId: paperResult.insertId });
-                }
-              })
-              .catch((err) => {
-                res.status(500).json({ error: 'Failed to link paper with domain.' });
-              });
-          })
-          .catch((err) => {
-            res.status(500).json({ error: 'Failed to submit paper.' });
-          });
-      }
-    }
-  }
+  },
 ];
+
+// Helper function to check existence or create a new entry
+async function checkOrCreate(table, idColumn, nameColumn, name) {
+  if (!isNaN(name)) return name;
+
+  const [rows] = await db.promise().query(`SELECT ${idColumn} FROM ${table} WHERE ${nameColumn} = ?`, [name]);
+  if (rows.length > 0) return rows[0][idColumn];
+
+  const [result] = await db.promise().query(`INSERT INTO ${table} (${nameColumn}) VALUES (?)`, [name]);
+  return result.insertId;
+}
+
 
 // Get papers by author
 exports.getPapersByAuthor = async (req, res) => {
@@ -277,6 +165,29 @@ exports.getResearchPapers = async (req, res) => {
   } catch (error) {
     console.error('Error fetching research papers:', error);
     res.status(500).json({ error: 'Error fetching research papers' });
+  }
+};
+// Assuming the following endpoint exists to get associated entities for a paper
+exports.getAssociations = async (req, res) => {
+  const { paperId } = req.params;
+  
+  try {
+    const paper = await Paper.getPaperById(paperId); // Find the paper by ID
+    if (!paper) {
+      return res.status(404).json({ error: "Paper not found" });
+    }
+    
+    const associations = {
+      domains: await Paper.getAssociatedDomains(paperId),
+      conferences: await Paper.getAssociatedConferences(paperId),
+      journals: await Paper.getAssociatedJournals(paperId),
+      authors: await Paper.getAssociatedAuthors(paperId)
+    };
+
+    res.status(200).json(associations); // Return associations
+  } catch (error) {
+    console.error("Error fetching associations:", error.message);
+    res.status(500).json({ error: "Failed to fetch associations." });
   }
 };
 

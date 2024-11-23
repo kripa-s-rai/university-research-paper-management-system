@@ -4,7 +4,7 @@ import './SubmitPaper.css';
 import { useAuth } from '../context/AuthContext'; // Assuming this context gives user data
 
 const SubmitPaper = () => {
-  const { user, loading } = useAuth(); // Get user data from context and loading state
+  const { user, loading } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
     abstract: '',
@@ -12,33 +12,26 @@ const SubmitPaper = () => {
     domainId: '',
     conference: '',
     journal: '',
-    authorId: '', // We will set this from user context
+    authorId: '', // Set from user context
   });
   const [domains, setDomains] = useState([]);
   const [conferences, setConferences] = useState([]);
   const [journals, setJournals] = useState([]);
+  const [domainSuggestions, setDomainSuggestions] = useState([]);
+  const [conferenceSuggestions, setConferenceSuggestions] = useState([]);
+  const [journalSuggestions, setJournalSuggestions] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [domainSuggestions, setDomainSuggestions] = useState([]);
-  const [conferenceSuggestions, setConferenceSuggestions] = useState([]);
-  const [journalSuggestions, setJournalSuggestions] = useState([]);
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-  // Log user object for debugging
   useEffect(() => {
-    console.log('User object:', user);
-
     if (user && user.UserID) {
-      console.log('Setting authorId:', user.UserID); // Log before setting the state
       setFormData((prevData) => ({ ...prevData, authorId: user.UserID }));
-    } else {
-      console.log('User not logged in or UserID is missing');
     }
 
-    // Fetch domains, conferences, and journals
     const fetchData = async () => {
       try {
         const [domainRes, conferenceRes, journalRes] = await Promise.all([
@@ -57,19 +50,16 @@ const SubmitPaper = () => {
     fetchData();
   }, [user]);
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
-  // Handle file input change
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type !== 'application/pdf') {
+    if (file?.type !== 'application/pdf') {
       setError('Only PDF files are allowed.');
-      setFormData((prevData) => ({ ...prevData, document: null }));
-    } else if (file && file.size > MAX_FILE_SIZE) {
+    } else if (file?.size > MAX_FILE_SIZE) {
       setError('File size exceeds the 5MB limit.');
     } else {
       setError('');
@@ -77,54 +67,43 @@ const SubmitPaper = () => {
     }
   };
 
-  // Handle domain search input change
   const handleDomainChange = (e) => {
     const value = e.target.value;
     setFormData((prevData) => ({ ...prevData, domainId: value }));
-
-    const filteredDomains = domains.filter((domain) =>
-      domain.DomainName.toLowerCase().includes(value.toLowerCase())
+    setDomainSuggestions(
+      domains.filter((domain) =>
+        domain.DomainName.toLowerCase().includes(value.toLowerCase())
+      )
     );
-    setDomainSuggestions(filteredDomains);
   };
 
-  // Handle conference search input change
   const handleConferenceChange = (e) => {
     const value = e.target.value;
     setFormData((prevData) => ({ ...prevData, conference: value }));
-
-    const filteredConferences = conferences.filter((conference) =>
-      conference.name.toLowerCase().includes(value.toLowerCase())
+    setConferenceSuggestions(
+      conferences.filter((conference) =>
+        conference.ConferenceName.toLowerCase().includes(value.toLowerCase())
+      )
     );
-    setConferenceSuggestions(filteredConferences);
   };
 
-  // Handle journal search input change
   const handleJournalChange = (e) => {
     const value = e.target.value;
     setFormData((prevData) => ({ ...prevData, journal: value }));
-
-    const filteredJournals = journals.filter((journal) =>
-      journal.name.toLowerCase().includes(value.toLowerCase())
+    setJournalSuggestions(
+      journals.filter((journal) =>
+        journal.JournalName.toLowerCase().includes(value.toLowerCase())
+      )
     );
-    setJournalSuggestions(filteredJournals);
   };
 
-  // Handle selecting suggestions
   const handleSelectSuggestion = (field, value, id = null) => {
-    if (field === 'domainId') {
-      setFormData((prevData) => ({ ...prevData, domainId: id }));
-    } else {
-      setFormData((prevData) => ({ ...prevData, [field]: value }));
-    }
-
-    // Clear suggestions after selection
+    setFormData((prevData) => ({ ...prevData, [field]: id || value }));
     if (field === 'domainId') setDomainSuggestions([]);
     if (field === 'conference') setConferenceSuggestions([]);
     if (field === 'journal') setJournalSuggestions([]);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -132,7 +111,6 @@ const SubmitPaper = () => {
     setSuccessMessage('');
 
     const { title, abstract, document, domainId, conference, journal, authorId } = formData;
-    console.log(formData)
 
     if (!title || !abstract || !document || !domainId || !authorId) {
       setError('Please fill out all required fields before submitting.');
@@ -145,8 +123,8 @@ const SubmitPaper = () => {
     submissionData.append('abstract', abstract);
     submissionData.append('document', document);
     submissionData.append('domainId', domainId);
-    submissionData.append('conference', conference); // Can be empty
-    submissionData.append('journal', journal); // Can be empty
+    submissionData.append('conference', conference);
+    submissionData.append('journal', journal);
     submissionData.append('authorId', authorId);
 
     try {
@@ -166,7 +144,7 @@ const SubmitPaper = () => {
           domainId: '',
           conference: '',
           journal: '',
-          authorId: user.UserID, // Reset authorId if needed
+          authorId: user.UserID,
         });
         setProgress(0);
       }
@@ -181,7 +159,6 @@ const SubmitPaper = () => {
     }
   };
 
-  // Return loading state if user data is not available
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -255,9 +232,9 @@ const SubmitPaper = () => {
               placeholder="Type to search conference"
             />
             <ul className="suggestions-list">
-              {conferenceSuggestions.map((conf) => (
-                <li key={conf.id} onClick={() => handleSelectSuggestion('conference', conf.name, conf.id)}>
-                  {conf.name}
+              {conferenceSuggestions.map((conference) => (
+                <li key={conference.ConferenceID} onClick={() => handleSelectSuggestion('conference', conference.ConferenceName)}>
+                  {conference.ConferenceName}
                 </li>
               ))}
             </ul>
@@ -274,8 +251,8 @@ const SubmitPaper = () => {
             />
             <ul className="suggestions-list">
               {journalSuggestions.map((journal) => (
-                <li key={journal.id} onClick={() => handleSelectSuggestion('journal', journal.name, journal.id)}>
-                  {journal.name}
+                <li key={journal.JournalID} onClick={() => handleSelectSuggestion('journal', journal.JournalName)}>
+                  {journal.JournalName}
                 </li>
               ))}
             </ul>
@@ -285,10 +262,18 @@ const SubmitPaper = () => {
             {error && <p className="error-message">{error}</p>}
             {successMessage && <p className="success-message">{successMessage}</p>}
             <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? `Submitting (${progress}%)` : 'Submit Paper'}
+              {isSubmitting ? 'Submitting...' : 'Submit Paper'}
             </button>
           </div>
         </form>
+
+        {isSubmitting && (
+          <div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: `${progress}%` }}>
+              {progress}%
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

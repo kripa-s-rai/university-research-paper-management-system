@@ -5,12 +5,12 @@ const User = {
   register: async (userData, callback) => {
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-
+    
     // Insert query with correct field names (matching the table schema)
     const sql = 'INSERT INTO users (Name, Email, Password, Role, DepartmentID) VALUES (?, ?, ?, ?, ?)';
     
     // Execute the query with the passed user data
-    db.query(sql, [userData.username, userData.email, hashedPassword, userData.role, userData.departmentID], (err, result) => {
+    db.query(sql, [userData.username, userData.email, hashedPassword, userData.role, userData.department], (err, result) => {
       if (err) return callback(err);
       return callback(null, result);
     });

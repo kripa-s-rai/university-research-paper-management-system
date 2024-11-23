@@ -13,21 +13,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
       setIsAuthenticated(true); // Set authenticated to true if user exists in localStorage
     }
   }, []);
 
+  // Login function to set user data and authentication state
   const login = (userData) => {
     setUser(userData); 
     setIsAuthenticated(true); // Update isAuthenticated to true
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userData)); // Save user data in localStorage
   };
 
+  // Logout function to clear user data and authentication state
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false); // Update isAuthenticated to false on logout
-    localStorage.removeItem('user');
+    localStorage.removeItem('user'); // Remove user data from localStorage
   };
 
   return (

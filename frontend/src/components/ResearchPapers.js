@@ -8,9 +8,11 @@ const ResearchPapers = () => {
   const [selectedDomain, setSelectedDomain] = useState('');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [domainSuggestions, setDomainSuggestions] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [currentPaperID, setCurrentPaperID] = useState(null);
+  const [reviewData, setReviewData] = useState({ comment: '', rating: '' });
 
-  // Fetch research papers from backend
+  // Fetch research papers
   useEffect(() => {
     const fetchPapers = async () => {
       try {
@@ -25,18 +27,12 @@ const ResearchPapers = () => {
     fetchPapers();
   }, []);
 
-  // Fetch domains from backend and remove duplicates
+  // Fetch domains
   useEffect(() => {
     const fetchDomains = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/domains');
-
-        // Remove duplicate domains based on DomainName
-        const uniqueDomains = Array.from(
-          new Map(response.data.map((domain) => [domain.DomainName, domain])).values()
-        );
-
-        setDomains(uniqueDomains);
+        setDomains(response.data);
       } catch (error) {
         console.error('Error fetching domains:', error);
       }
@@ -44,63 +40,56 @@ const ResearchPapers = () => {
     fetchDomains();
   }, []);
 
-  // Handle domain filter input and show suggestions
-  const handleDomainInputChange = (event) => {
-    const query = event.target.value.toLowerCase();
-    setDomainSuggestions(domains.filter(domain => domain.DomainName.toLowerCase().includes(query)));
-    setSelectedDomain(query); // Update the selected domain for input
+  const handleAddReview = async () => {
+    if (!reviewData.comment || !reviewData.rating) {
+      alert('Please fill out all fields');
+      return;
+    }
+
+    try {
+      await axios.post(`http://localhost:5000/api/reviews`, {
+        PaperID: currentPaperID,
+        Comment: reviewData.comment,
+        Rating: reviewData.rating,
+      });
+      alert('Review added successfully!');
+      setShowReviewModal(false);
+      setReviewData({ comment: '', rating: '' });
+    } catch (error) {
+      console.error('Error adding review:', error);
+      alert('Failed to add review.');
+    }
   };
 
-  // Handle domain selection from suggestions
-  const handleDomainSelect = (domain) => {
-    setSelectedDomain(domain.DomainName);
-    setDomainSuggestions([]); // Clear the suggestions after selection
-  };
-
-  // Handle search query
-  const handleSearch = (event) => {
-    setSearchQuery(event.target.value.toLowerCase());
-  };
-
-  // Filtered papers based on domain and search query
   const filteredPapers = papers.filter((paper) => {
+    const matchesSearch = paper.Title?.toLowerCase().includes(searchQuery.toLowerCase()) || false;
     const matchesDomain = selectedDomain === '' || paper.DomainID === Number(selectedDomain);
-    const matchesSearch = paper.Title.toLowerCase().includes(searchQuery);
-    return matchesDomain && matchesSearch;
+    return matchesSearch && matchesDomain && paper.Status === 'Accepted';
   });
 
   return (
     <div className="research-paper-container">
       <header className="research-header">
         <h1>Explore Research Papers</h1>
-        <p>Browse the latest research across various domains and topics.</p>
+        <p>Find insightful research across various domains and topics.</p>
       </header>
 
       <section className="filter-panel">
         <input
           type="text"
-          placeholder="Search by title"
+          placeholder="Search papers by title"
           className="search-input"
           value={searchQuery}
-          onChange={handleSearch}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-
-        {/* Domain input with suggestions */}
         <div className="domain-filter-container">
           <input
             type="text"
-            placeholder="Search by Domain"
-            value={selectedDomain}
-            onChange={handleDomainInputChange}
+            placeholder="Filter by domain"
             className="domain-input"
+            value={selectedDomain}
+            onChange={(e) => setSelectedDomain(e.target.value)}
           />
-          <ul className="suggestions-list">
-            {domainSuggestions.map((domain) => (
-              <li key={domain.DomainID} onClick={() => handleDomainSelect(domain)}>
-                {domain.DomainName}
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 
@@ -111,25 +100,79 @@ const ResearchPapers = () => {
           {filteredPapers.length > 0 ? (
             filteredPapers.map((paper) => (
               <div className="paper-card" key={paper.PaperID}>
-                <h2 className="paper-title">{paper.Title}</h2>
-                <p className="paper-author">Author: {paper.CorrespondingAuthor}</p>
-
+                <h2 className="paper-title">{paper.Title || 'Untitled Paper'}</h2>
+                <p className="paper-author">
+                  <strong>Author:</strong> {paper.CorrespondingAuthor || 'Unknown'}
+                </p>
+                <p className="paper-domain">
+                  <strong>Domain:</strong> {paper.DomainName || 'N/A'}
+                </p>
                 <div className="paper-actions">
                   <button
-                    className="btn btn-primary mb-2"
+                    className="btn btn-primary"
                     onClick={() => window.open(`http://localhost:5000/${paper.document}`, "_blank")}
                   >
                     Read
                   </button>
-                  <button className="btn btn-secondary mb-2">
-                    Download
+                  <button className="btn btn-secondary">Download</button>
+                  <button
+                    className="btn btn-add-review"
+                    onClick={() => {
+                      setCurrentPaperID(paper.PaperID);
+                      setShowReviewModal(true);
+                    }}
+                  >
+                    Add Review
                   </button>
+                </div>
+                <div className="paper-reviews">
+                  <strong>Reviews:</strong>
+                  {paper.Reviews?.length > 0 ? (
+                    paper.Reviews.map((review) => (
+                      <div key={review.ReviewID} className="review">
+                        <p>{review.Comment}</p>
+                        <span>Rating: {review.Rating}/5</span>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No reviews available</p>
+                  )}
                 </div>
               </div>
             ))
           ) : (
             <p className="no-results-text">No research papers found.</p>
           )}
+        </div>
+      )}
+
+      {/* Modal for Adding Reviews */}
+      {showReviewModal && (
+        <div className="review-modal">
+          <div className="review-modal-content">
+            <h3>Add Review</h3>
+            <textarea
+              placeholder="Write your review here"
+              value={reviewData.comment}
+              onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+            ></textarea>
+            <input
+              type="number"
+              min="1"
+              max="5"
+              placeholder="Rating (1-5)"
+              value={reviewData.rating}
+              onChange={(e) => setReviewData({ ...reviewData, rating: e.target.value })}
+            />
+            <div className="modal-actions">
+              <button className="btn btn-primary" onClick={handleAddReview}>
+                Submit
+              </button>
+              <button className="btn btn-secondary" onClick={() => setShowReviewModal(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -8,6 +8,24 @@ const Journals = {
       return callback(null, result);
     });
   },
+  deleteJournal :(id) => {
+    return new Promise((resolve, reject) => {
+      db.query('CALL deleteJournal(?)', [id], (err, results) => {
+        if (err) reject(err);
+        resolve(results);
+      });
+    });
+  },
+  
+  // Modify a journal
+  modifyJournal : (id, name) => {
+    return new Promise((resolve, reject) => {
+      db.query('CALL modifyJournal(?, ?)', [id, name], (err, results) => {
+        if (err) reject(err);
+        resolve(results);
+      });
+    });
+  },
 };
 
 module.exports=Journals;

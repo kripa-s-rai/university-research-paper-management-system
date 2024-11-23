@@ -13,6 +13,7 @@ const domainRoutes = require('./routes/domainRoutes'); // Import domain routes
 const conferenceRoutes = require('./routes/conferenceRoutes'); // Import conference routes
 const journalRoutes=require('./routes/journalRoutes.js')
 const authorRoutes = require("./routes/authorRoutes.js");
+const reviewRoutes=require('./routes/reviewRoutes.js');
 
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use('/api/journals', journalRoutes);  // Use conference routes
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/authors", authorRoutes);
 app.use('/api/reporting',reportingRoutes);
+app.use('/api/reviews',reviewRoutes);
 
 app.use((req, res) => {
     console.log('404 Error for:', req.url);

@@ -1,0 +1,291 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+}
+
+.admin-papers {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filters input,
+.filters select {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 200px;
+}
+
+.filters input:focus,
+.filters select:focus {
+  outline: none;
+  border-color: #5b9bd5;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+
+/* Table Styles */
+.papers-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.papers-table th, .papers-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.papers-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.papers-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.papers-table td button {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  margin: 5px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.papers-table td button:hover {
+  opacity: 0.8;
+}
+
+/* View Button Styles */
+.view-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.view-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Accept Button Styles */
+.accept-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.accept-btn:hover {
+  background-color: #218838;
+}
+
+/* Reject Button Styles */
+.reject-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.reject-btn:hover {
+  background-color: #c82333;
+}
+
+/* Delete Button Styles */
+.delete-btn {
+  background-color: #ffc107;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #e0a800;
+}
+
+/* Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+  overflow: auto; /* Enable scroll if needed */
+  padding-top: 60px; /* Add padding for top space */
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+}
+
+.close-btn {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+}
+
+.read-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+  display: block;
+  width: 100%;
+  font-size: 16px;
+}
+
+.read-btn:hover {
+  background-color: #45a049;
+}
+
+/* Modal Header and Body */
+.modal h3 {
+  color: #333;
+  font-size: 24px;
+}
+
+.modal p {
+  font-size: 16px;
+  color: #555;
+  margin: 10px 0;
+}
+
+/* Button Container in Modal */
+.modal-content button {
+  width: auto;
+  padding: 8px 16px;
+}
+
+/* Loader Styles */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader span {
+  font-size: 18px;
+  color: #333;
+  margin-left: 10px;
+}
+
+/* Additional Layout Adjustments */
+button:focus {
+  outline: none;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Modal styles */
+.modal {
+  display: block; 
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); 
+  overflow: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+}
+
+.close-btn {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.read-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.read-btn:hover {
+  background-color: #45a049;
+}
+
+/* Table styles */
+.papers-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.papers-table th, .papers-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.papers-table th {
+  background-color: #f2f2f2;
+}
+
+.filters input, .filters select {
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+}

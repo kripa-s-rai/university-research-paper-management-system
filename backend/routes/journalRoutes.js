@@ -4,6 +4,8 @@ const journalController = require('../controllers/journalController');
 
 // Get all journals
 router.get('/', journalController.getAllJournals);
+router.delete('/:id', journalController.deleteJournal);
+router.put('/:id', journalController.modifyJournal);
 
 
 
